@@ -1,6 +1,6 @@
 import './App.css';
 import Client from './client/Client';
-
+import Login from './components/Login';
 import AuthProvider from './context/AuthProvider'
 import SocketProvider from './context/SocketProvider'
 import { Container, Button } from 'react-bootstrap'
@@ -31,7 +31,15 @@ function App() {
     <div className="App">
       <SocketProvider socket={socket}>
         <AuthProvider>
-            <Client setRiconnetti={setRiconnetti}/>
+
+          <Container className="p-0 d-flex flex-column border" style={{ height: "100vh" }}>
+
+            <Login setRiconnetti={setRiconnetti} />
+
+            <Client />
+
+          </Container>
+
         </AuthProvider>
       </SocketProvider>
     </div>
