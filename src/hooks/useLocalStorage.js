@@ -4,8 +4,7 @@ const PREFIX = 'live-chat-'
 
 export default function useLocalStorage(key) {
 
-//    const [value, setValue] = useState()
-
+    //ogni volta carica tutti i messaggi
     // const [value, setValue] = useState(() => {
     //     const jsonValue = localStorage.getItem(PREFIX + key)
     //     if (jsonValue != null) return JSON.parse(jsonValue)
@@ -15,15 +14,32 @@ export default function useLocalStorage(key) {
     //     localStorage.setItem(PREFIX + key, JSON.stringify(value))
     // }, [value])
 
-    const loadValue = (recipient) => {
-        const jsonValue = localStorage.getItem(PREFIX + key + "-" + recipient)
-        if (jsonValue != null)
-            return JSON.parse(jsonValue)
-        else return false
+
+    // //carica solo i messaggi inviati con un particolare recipient
+    // const loadValue = (me, recipient) => {
+    //     let msgs = []
+
+    //     Array.from(value).forEach((el) => {
+    //         console.log("EL", el)
+    //         if (el.to === recipient || el.from === recipient)
+    //             msgs.push(el)
+    //     })
+
+    //     //da ordinare secondo la data msgs.time, poi return
+    //     return msgs
+
+    // }
+
+
+    //ritorna tutti i messaggi salvati nel db locale (nel quale user.name è coinvolto)
+    const loadValue = (username) => {
+        const jsonValue = localStorage.getItem(PREFIX + key + "-" + username)
+        if (jsonValue != null) return JSON.parse(jsonValue)
+    
     }
 
-    const saveValue = (recipient, valueToSave) => {
-        localStorage.setItem(PREFIX + key + "-" + recipient, JSON.stringify(valueToSave))
+    const saveValue = (username, valueToSave) => {
+        localStorage.setItem(PREFIX + key + "-" + username, JSON.stringify(valueToSave))
 
     }
 

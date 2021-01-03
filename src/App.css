@@ -7,38 +7,36 @@ html {
   background-color: darkkhaki;
 }
 
-#UtentiOnline .contactLink{
-  padding:10px;
-  }
-#UtentiOnline .contactLink:hover{
-cursor: pointer;
-background-color: #80a8ff;
+#UtentiOnline .contactLink {
+  padding: 10px;
 }
-#UtentiOnline .contactActive{
-  color:white;
+
+#UtentiOnline .contactLink:hover {
+  cursor: pointer;
+  background-color: #80a8ff;
+}
+
+#UtentiOnline .contactActive {
+  color: white;
   background-color: #a6c2ff;
-  }
-  
+}
 
+.bgred {
+  background-color: rgb(255, 213, 213);
+}
 
+.bgblue {
+  background-color: rgb(184, 211, 216);
+}
 
+.bggreen {
+  background-color: rgb(209, 221, 180);
+}
 
-  .bgred{
-    background-color: rgb(255, 213, 213);
-  }
-
-  .bgblue{
-    background-color: rgb(184, 211, 216);
-  }
-  .bggreen{
-    background-color: rgb(209, 221, 180);
-  }
-.small-text{
-  color:darkgrey;
+.small-text {
+  color: darkgrey;
   font-size: 14px;
 }
-
-
 
 .message {
   border-radius: 20px;
@@ -54,11 +52,43 @@ background-color: #80a8ff;
   position: relative;
 }
 
-.mine  {
+.mine {
   align-items: flex-end;
   color: white;
   margin-left: 25%;
   background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
   background-attachment: fixed;
   position: relative;
+}
+
+.alertPopup {
+  position:absolute;
+  z-index: 100;
+  top: 15px;
+  left: 15px;
+  padding: 20px;
+  background-color: rgb(216, 252, 216);
+  color: rgb(73, 128, 73);
+  padding:10px;
+  box-shadow: 2px 2px 4px 2px #42424293;
+}
+.alertPopup:hover {
+ cursor: pointer;
+ box-shadow: 2px 2px 3px 1px #42424293;
+
+}
+
+.inputMessage{
+  border: 0;
+}
+.inputMessage:focus{
+  outline: none;
+  background-color: rgb(186, 238, 108);
+}
+
+.buttonMessage{
+  border: 0;
+}
+.buttonMessage:active{
+  outline: none;
 }

@@ -1,6 +1,8 @@
 import React, { Fragment, createRef, useRef, useState, useEffect } from 'react'
-import { Container, Tab, Nav, Form, Button, Row, Col } from 'react-bootstrap'
+import { Container, Tab, Nav, Form, Button, Row, Col, Alert } from 'react-bootstrap'
+
 import { useSocket } from "../context/SocketProvider";
+
 
 
 import Moment from 'react-moment';
@@ -11,7 +13,7 @@ import moment from 'moment';
 const MINE = true   //indica messaggi inviati
 const YOURS = false //indicaconst { socket } = useSocket() messaggi ricevuti
 
-export default function Messaggi({ messaggi, setMessaggi, me, recipient }) {
+export default function Messaggi({ messaggi, setMessaggi, me, recipient, msgWithRecipient, setMsgWithRecipient }) {
     const { socket } = useSocket()
 
     const init_msg = {
@@ -25,21 +27,12 @@ export default function Messaggi({ messaggi, setMessaggi, me, recipient }) {
     const lastMessage = createRef()
     let lastMsg = { init_msg }
 
-    useEffect(() => {
 
-        socket.on('msgIn', (msg) => {
-            console.log("in entrata", msg)
-            setMessaggi(prevState => {
-                return [...prevState, msg]
-            })
-        });
-
-    }, [])
 
 
     useEffect(() => {
         lastMessage.current.scrollIntoView({ behavior: 'smooth' })
-    }, [messaggi]
+    }, [msgWithRecipient]
     )
 
     const handleSubmit = (e) => {
@@ -56,7 +49,6 @@ export default function Messaggi({ messaggi, setMessaggi, me, recipient }) {
         })
 
         socket.emit("msgOut", msg)
-        console.log("in uscita ", msg)
 
         msgRef.current.value = ""
     }
@@ -64,12 +56,10 @@ export default function Messaggi({ messaggi, setMessaggi, me, recipient }) {
 
     return (
         <Row className="bggreen d-flex flex-column h-100">
-            <div className="p-3 flex-grow-1
-                justify-content-end
-                overflow-auto" style={{ height: "20vh" }}>
+            <div className="p-3 flex-grow-1 justify-content-end overflow-auto" style={{ height: "20vh" }}>
                 I miei messaggi con {recipient}
 
-                {messaggi.map((msg, index) => {
+                {msgWithRecipient.map((msg, index) => {
                     lastMsg = {
                         from: msg.from,
                         to: msg.to,
@@ -102,12 +92,12 @@ export default function Messaggi({ messaggi, setMessaggi, me, recipient }) {
 
             </div>
             <div className="">
-                <Form onSubmit={e => handleSubmit(e)} className="d-flex">
-                    <Form.Control className="p-4"
+                <Form onSubmit={e => handleSubmit(e)} className="d-flex justify-content-between">
+                    <input className="inputMessage p-4 flex-grow-1"
                         type="text" ref={msgRef}
                         placeholder="Inserisci il messaggio..."
                         required />
-                    <Button type="submit" variant="success">Invia</Button>
+                    <Button type="submit" variant="success" className="buttonMessage">Invia</Button>
                 </Form>
             </div>
         </Row>
