@@ -13,7 +13,7 @@ import moment from 'moment';
 const MINE = true   //indica messaggi inviati
 const YOURS = false //indicaconst { socket } = useSocket() messaggi ricevuti
 
-export default function Messaggi({ messaggi, setMessaggi, me, recipient, msgWithRecipient, setMsgWithRecipient }) {
+export default function Messaggi({ setMessaggi, me, recipient, msgWithRecipient }) {
     const { socket } = useSocket()
 
     const init_msg = {
@@ -26,8 +26,6 @@ export default function Messaggi({ messaggi, setMessaggi, me, recipient, msgWith
     const msgRef = useRef()
     const lastMessage = createRef()
     let lastMsg = { init_msg }
-
-
 
 
     useEffect(() => {

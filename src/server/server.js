@@ -48,7 +48,8 @@ const signout = (name) => {
 
 setInterval(async () => {
     console.log(" #U: ", utentiLoggati.length, "#S: ", io.of("/").sockets.size, "\n", utentiLoggati, "\n_______________")
-
+    if (utentiLoggati.length !== io.of("/").sockets.size)
+        console.log("  !!!  UTENTI  !=  SOCKET  !!!", utentiLoggati.length, io.of("/").sockets.size)
     // Socket aperte
     // const ids = await io.of("/").allSockets();
     // console.log(ids)

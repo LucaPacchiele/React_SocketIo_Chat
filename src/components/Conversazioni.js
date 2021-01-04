@@ -8,7 +8,7 @@ import { useSocket } from "../context/SocketProvider";
 
 import useLocalStorage from '../hooks/useLocalStorage'
 
-import UtentiOnline from './UtentiOnline'
+import ListaUtentiOnline from './ListaUtentiOnline'
 import Messaggi from './Messaggi'
 
 
@@ -23,33 +23,20 @@ function Conversazioni() {
 
     const [messaggi, setMessaggi] = useState([])
     const [msgWithRecipient, setMsgWithRecipient] = useState([])
+    const [totMsgs, setTotMsgs] = useState([])
+    const [readMessages, setReadMessages] = useState([])
 
     const [showAlert, setShowAlert] = useState(false);
     const [msgFrom, setMsgFrom] = useState("");
 
 
-    const getNumMessagesWith = (username) => {
-        let msgs = []
-        if (messaggi) {
-            Array.from(messaggi).forEach((el) => {
-                if (el.to === username || el.from === username)
-                    msgs.push(el)
-            })
-            return msgs.length
-        }
-        else return -2
-    }
-
-
     useEffect(() => {
+        //al caricamento del componente, carico tutti i messaggi
         const c = loadValue(user.name)
         c ? setMessaggi(c) : setMessaggi([])
-        console.log("RENDERIZZA")
 
         socket.on('msgIn', (msg) => {
-
             setMsgFrom(msg.from)
-
             setMessaggi(prevState => {
                 return [...prevState, msg]
             })
@@ -76,8 +63,17 @@ function Conversazioni() {
             })
             return msgs
         })
+        return (() => setMsgWithRecipient([]))
 
     }, [messaggi])
+
+    useEffect(() => {
+        setTotMsgs(msgWithRecipient.length)
+        console.log("msgWithRecipient", msgWithRecipient)
+    }, [msgWithRecipient])
+
+    // usestate variabile = messaggiLetti - msgWithRecipient  -->useEffect per aggiornarla quando cambia msgWithRecipient?
+    //passa come props variabile a ListaUtentiOnline
 
 
     return (
@@ -87,15 +83,18 @@ function Conversazioni() {
 
             <Row className="bgred h-100">
                 <Col sm={3}>
-                    <UtentiOnline recipient={recipient} setRecipient={setRecipient} setTotUsers={setTotUsers} getNumMessagesWith={getNumMessagesWith} />
+                    <ListaUtentiOnline recipient={recipient} setRecipient={setRecipient}
+                        setTotUsers={setTotUsers} totMsgs={totMsgs} />
                 </Col>
                 <Col sm={9} className="bgblue">
                     {totUsers > 0 ?
                         <>
                             {recipient ?
-                                <Messaggi messaggi={messaggi} setMessaggi={setMessaggi} me={user.name}
+                                <Messaggi
+                                    msgWithRecipient={msgWithRecipient}
                                     recipient={recipient}
-                                    msgWithRecipient={msgWithRecipient} setMsgWithRecipient={setMsgWithRecipient}
+                                    me={user.name}
+                                    setMessaggi={setMessaggi}
                                 />
                                 :
                                 <Alert variant="success">Seleziona un contatto</Alert>

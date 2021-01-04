@@ -4,7 +4,7 @@ import { useSocket } from "../context/SocketProvider";
 import { useAuth } from "../context/AuthProvider";
 
 
-export default function UtentiOnline({ recipient, setRecipient, setTotUsers, getNumMessagesWith }) {
+export default function ListaUtentiOnline({ recipient, setRecipient, setTotUsers, totMsgs }) {
     const { socket } = useSocket()
     const { user } = useAuth()
     const [onlineUsers, setOnlineUsers] = useState([])
@@ -14,6 +14,7 @@ export default function UtentiOnline({ recipient, setRecipient, setTotUsers, get
     useEffect(() => {
         socket.emit("getOnlineUsers", user.name, (res) => { setOnlineUsers(Array.from(JSON.parse(res.data))) })
         setTotUsers(onlineUsers.length)
+        return (()=>{setOnlineUsers([])})
     }, [])
 
 
@@ -53,7 +54,7 @@ export default function UtentiOnline({ recipient, setRecipient, setTotUsers, get
                         "contactLink d-flex justify-content-between"}
                         onClick={() => { setRecipient(el.userName) }}>
                         <div>{el.userName}</div>
-                        <div><Badge variant="light">{getNumMessagesWith(el.userName)}</Badge></div>
+                        <div><Badge variant="light">{totMsgs}</Badge></div>
                     </div>
                 ))}
             </div>
