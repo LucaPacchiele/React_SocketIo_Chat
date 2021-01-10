@@ -1,36 +1,33 @@
 import React, { Fragment, createRef, useRef, useState, useEffect } from 'react'
 import { Container, Tab, Nav, Form, Button, Row, Col, Alert } from 'react-bootstrap'
 
-import { useSocket } from "../context/SocketProvider";
-
-
 
 import Moment from 'react-moment';
 import moment from 'moment';
 
 //da implementare css messaggi https://codepen.io/swards/pen/gxQmbj
 
-const MINE = true   //indica messaggi inviati
-const YOURS = false //indicaconst { socket } = useSocket() messaggi ricevuti
 
-export default function Messaggi({ setMessaggi, me, recipient, msgWithRecipient }) {
-    const { socket } = useSocket()
+export default function Messaggi({ recipient, msgs, me, spedisciMessaggio }) {
+
 
     const init_msg = {
         from: '',
         to: '',
         body: '',
-        time: ''
+        time: '',
+        read:false
     }
 
     const msgRef = useRef()
     const lastMessage = createRef()
-    let lastMsg = { init_msg }
+    let currMsg = { init_msg }
+
 
 
     useEffect(() => {
         lastMessage.current.scrollIntoView({ behavior: 'smooth' })
-    }, [msgWithRecipient]
+    }, [msgs]
     )
 
     const handleSubmit = (e) => {
@@ -40,13 +37,11 @@ export default function Messaggi({ setMessaggi, me, recipient, msgWithRecipient 
             from: me,
             to: recipient,
             body: msgRef.current.value,
-            time: moment()
+            time: moment().toString(), //necessario convertirlo in stringa poichè verrà usato come ID del messaggio assieme a from e to
+            read:false
         }
-        setMessaggi(prevState => {
-            return [...prevState, msg]
-        })
-
-        socket.emit("msgOut", msg)
+        
+        spedisciMessaggio(recipient, msg)
 
         msgRef.current.value = ""
     }
@@ -57,21 +52,23 @@ export default function Messaggi({ setMessaggi, me, recipient, msgWithRecipient 
             <div className="p-3 flex-grow-1 justify-content-end overflow-auto" style={{ height: "20vh" }}>
                 I miei messaggi con {recipient}
 
-                {msgWithRecipient.map((msg, index) => {
-                    lastMsg = {
+                {msgs.map((msg, index) => {
+                    currMsg = {
                         from: msg.from,
                         to: msg.to,
                         body: msg.body,
-                        time: msg.time
+                        time: msg.time,
+                        read: msg.read
                     }
                     return (
                         <Fragment key={index}>
-                            {lastMsg.from === me ?
-                                <div className="mine message" >
-                                    {msg.body}
+                            {currMsg.from === me ?
+                                <div className="mine message d-flex justify-content-between" >
+                                     <div>{msg.body}</div>
+                                    {msg.read && <div style={{color:"green", fontWeight:"bold"}}>v</div>}
                                 </div>
                                 :
-                                <div className="yours message">
+                                <div className="yours message ">
                                     {msg.body}
                                 </div>
                             }
@@ -82,8 +79,8 @@ export default function Messaggi({ setMessaggi, me, recipient, msgWithRecipient 
 
 
                 <div ref={lastMessage}>
-                    <Moment date={lastMsg.time}
-                        className={lastMsg.from === me ? "small-text d-flex justify-content-end" : "small-text d-flex justify-content-start"}
+                    <Moment date={currMsg.time} //in questo momento currMsg è l'ultimo messaggio
+                        className={currMsg.from === me ? "small-text d-flex justify-content-end" : "small-text d-flex justify-content-start"}
                         format="HH:mm:ss - DD-MM-YYYY"
                     />
                 </div>

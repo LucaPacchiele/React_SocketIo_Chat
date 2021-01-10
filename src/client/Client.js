@@ -7,7 +7,9 @@ import { useHistory } from "react-router-dom";
 import { useSocket } from "../context/SocketProvider";
 
 
+
 export default function Client() {
+
     const [activePanel, setActivePanel] = useState("conversazioni")
     const { user, signout } = useAuth()
     const { socketInfo } = useSocket()
@@ -34,7 +36,7 @@ export default function Client() {
             <Container className="p-0 d-flex flex-column border" style={{ height: "100vh" }}>
 
                 <div className="d-flex justify-content-between align-items-center p-2">
-                    <h6 className="mr-5" style={{color:"#558855"}}>{socketId}</h6>
+                    <h6 className="mr-5" style={{ color: "#558855" }}>{socketId}</h6>
                     <div className="d-flex">
                         <h3 className="mr-4">{user.name}</h3>
                         <Button type="submit" variant="primary" onClick={() => {
@@ -46,10 +48,14 @@ export default function Client() {
 
                 <Nav className="justify-content-center">
                     <Nav.Item>
-                        <Nav.Link eventKey="contatti" onClick={() => { setActivePanel("contatti") }}>Contatti</Nav.Link>
+                        <Nav.Link eventKey="contatti" onClick={() => { setActivePanel("contatti") }}>
+                            Contatti
+                            </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                        <Nav.Link eventKey="conversazioni" onClick={() => { setActivePanel("conversazioni") }}>Conversazioni</Nav.Link>
+                        <Nav.Link eventKey="conversazioni" onClick={() => { setActivePanel("conversazioni") }}>
+                            Conversazioni 
+                        </Nav.Link>
                     </Nav.Item>
                 </Nav>
 

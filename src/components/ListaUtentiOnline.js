@@ -1,47 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Nav, Alert, Row, Col, Badge } from 'react-bootstrap'
-import { useSocket } from "../context/SocketProvider";
-import { useAuth } from "../context/AuthProvider";
 
 
-export default function ListaUtentiOnline({ recipient, setRecipient, setTotUsers, totMsgs }) {
-    const { socket } = useSocket()
-    const { user } = useAuth()
-    const [onlineUsers, setOnlineUsers] = useState([])
 
+export default function ListaUtentiOnline({ recipient, setRecipient, onlineUsers, conv }) {
 
-    // faccio una chiamata al server appena carico il componente ...
-    useEffect(() => {
-        socket.emit("getOnlineUsers", user.name, (res) => { setOnlineUsers(Array.from(JSON.parse(res.data))) })
-        setTotUsers(onlineUsers.length)
-        return (()=>{setOnlineUsers([])})
-    }, [])
-
-
-    // ... la richiesta viene effettuata ogni 2 secondi per verificare se vi sono nuovi utenti connessi
-    // il timer viene distrutto quando il componente non viene visualizzato più, ad esempio cambiando scheda
-    // è utile per limitare le richieste, anziché impostare un timer direttamente nel provider della socket
-    // che tra l'altro causerebbe problemi di renderizzazione del componente creando una nuova socket.
-    // Devo usare una variabile di stato onlineUsers perchè è arincrona la chiamata al server
-    useEffect(() => {
-        const timerRequest = setInterval(() => {
-            socket.emit("getOnlineUsers", user.name, (res) => {
-                setOnlineUsers(Array.from(JSON.parse(res.data)))
-            })
-            setTotUsers(onlineUsers.length)
-        }, 500);
-        return () => {
-            clearInterval(timerRequest)
-        }
-    })
-
-    useEffect(() => {
-        //se il recipient corrente ha effettuato il logout imposto il suo valore come vuoto,
-        // in modo che non viene renderizzata la chat
-        if (!onlineUsers.find(el => el.userName === recipient)) {
-            setRecipient('')
-        }
-    }, [onlineUsers])
+    const totMsgs = (name) => {
+        const c = conv.find(e => e.with === name)
+        if (c)
+        return c.msgs.length
+        else return 0
+    }
 
     return (
         <Row id="UtentiOnline" className="d-flex flex-column h-100">
@@ -54,7 +23,7 @@ export default function ListaUtentiOnline({ recipient, setRecipient, setTotUsers
                         "contactLink d-flex justify-content-between"}
                         onClick={() => { setRecipient(el.userName) }}>
                         <div>{el.userName}</div>
-                        <div><Badge variant="light">{totMsgs}</Badge></div>
+                        <div><Badge variant="light">{totMsgs(el.userName)}</Badge></div>
                     </div>
                 ))}
             </div>

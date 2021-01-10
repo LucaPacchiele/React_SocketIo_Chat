@@ -1,0 +1,29 @@
+/* 
+TODO
+    
+        + messaggi letti da ultimare, vedi foglio, viene inviato un messaggio dopo l'evento makeConvread
+        l'utente che lo riceve imposterà i messaggi inviati fino a quel momento come letti
+        + Errore, al makeConvread vengono segnati letti i messaggi inviati da me
+        (devono essere segnati letti quando ricevo l'evento msgreadIn, non quando invio msgreadOut), modifica makeConvread
+
+        + In utenti online
+            -   Searchbox e sort recipient sulla base dell'ora dell'ultimo messaggio della conv
+                con quel recipient
+            -   Aggiungi ultimo messaggio
+        
+        + in server
+            -   controllo utenti con stesso nome
+        + In messaggi aggiugngi pulsante auto popolamento lorem ipsum
+        + API random foto:
+            - https://medium.com/@ssokurenko/generating-random-user-profiles-for-a-web-application-f0172b437db9
+            - https://jdenticon.com/get-started/angular.html
+
+
+        + test scimmia su chattata per vedere se gli store rispondono bene
+
+        + tocco grafico
+
+        ! doppia socket quando salvo il file (avevo corretto invertendo i provider prima tra auth e socket)
+         quando renderizzo Conversazioni (cambiando su scheda Contatti) si risolve..
+
+    */

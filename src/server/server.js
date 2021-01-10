@@ -98,6 +98,8 @@ io.on("connection", (socket) => {
 
         if (signout(name)) {
             console.log(name, "signout OK")
+            socket.broadcast.emit("client_logout", name);
+
             callback({
                 status: `${name} signout OK`
             })
@@ -108,6 +110,7 @@ io.on("connection", (socket) => {
             })
         }
     });
+    
 
     socket.on("getOnlineUsers", (name, callback) => {
         let data = []
@@ -119,6 +122,26 @@ io.on("connection", (socket) => {
             data: JSON.stringify(data)
         })
     })
+
+    socket.on('msgAllReadOut', ({ fromUser, withUser }) => {
+        const recipientIndex = utentiLoggati.findIndex((el) => el.userName === withUser)
+        if (recipientIndex > -1) {
+            console.log("ho letto tutti i messaggi di di", utentiLoggati[recipientIndex].userName)
+            socket.to(utentiLoggati[recipientIndex].socketId).emit("msgAllReadIn", { fromUser, withUser });
+        }
+    })
+
+    // socket.on('msgReadOut', (msg) => {
+    //     const { from, to, body, time } = msg
+    //     const recipientIndex = utentiLoggati.findIndex((el) => {
+    //         return el.userName === from
+    //     })
+    //     if (recipientIndex > -1) {
+    //         console.log("notifica lettura di", body," a ", utentiLoggati[recipientIndex].userName)
+    //         socket.to(utentiLoggati[recipientIndex].socketId).emit("msgReadIn", msg);
+    //     }
+    // })
+
 
     socket.on('msgOut', (msg) => {
         const { from, to, body, time } = msg
@@ -136,10 +159,9 @@ io.on("connection", (socket) => {
 
     // io client disconnect
     socket.on('disconnect', (reason) => {
-        socket.disconnect()
         console.log("Client disconnected ", socket.id, " Reason: ", reason)
         if (reason === 'transport close') {
-
+            
             let currUserIndex = utentiLoggati.findIndex((el) => {
                 return el.socketId === socket.id
             })
@@ -147,10 +169,15 @@ io.on("connection", (socket) => {
             if (currUserIndex > -1) {
                 let currUsername = utentiLoggati[currUserIndex].userName
                 console.log(currUsername, " left");
-                //eliminazione user dall'array
+
+                //eliminazione user dall'array e comunicazione a tutti i client
+                socket.broadcast.emit("client_logout", currUsername);
                 utentiLoggati.splice(currUserIndex, 1)
             }
         }
+
+        socket.disconnect()
+
     });
 
 

@@ -3,6 +3,7 @@ import Client from './client/Client';
 import Login from './components/Login';
 import PrivateRoute from './components/PrivateRoute'
 import ConnectedRoute from './components/ConnectedRoute'
+import TestComponent from './components/TestComponent'
 
 import AuthProvider from './context/AuthProvider'
 import SocketProvider from './context/SocketProvider'
@@ -49,6 +50,7 @@ function App() {
   return (
 
     <div className="App">
+      {/* <TestComponent /> */}
       <Router history={history}>
         <SocketProvider>
           <AuthProvider>
@@ -74,6 +76,7 @@ function App() {
           </AuthProvider>
         </SocketProvider>
       </Router>
+
     </div>
   );
 }
