@@ -63,18 +63,18 @@ export default function Messaggi({ recipient, msgs, me, spedisciMessaggio }) {
                             read: msg.read
                         }
                         return (
-                            <Fragment key={index}>
+                            <div key={index} className={currMsg.from === me ? "d-flex justify-content-end" : "d-flex justify-content-start"}>
                                 {currMsg.from === me ?
-                                    <div className="mine message d-flex justify-content-between" >
+                                    <div className="mine message d-flex justify-content-between align-items-center" >
                                         <div>{msg.body}</div>
-                                        {msg.read && <i className="fa fa-check checkReadIcon"></i>}
+                                        {msg.read && <i className="fa fa-check checkReadIcon ml-2"></i>}
                                     </div>
                                     :
                                     <div className="yours message ">
                                         {msg.body}
                                     </div>
                                 }
-                            </Fragment>
+                            </div>
                         )
                     }
                     )}

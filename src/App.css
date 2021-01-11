@@ -21,7 +21,7 @@
 
 * {
   font-family: 'Roboto-Regular', sans-serif;
-
+  font-size: 20px;
   margin: 0;
   padding: 0;
 }
@@ -68,26 +68,42 @@ body {
   margin-top: 5px;
   margin-bottom: 5px;
   word-wrap: break-word;
+  width:fit-content;
 }
 
 .yours {
   align-items: flex-start;
   margin-right: 25%;
+  margin-left: 5px;
   color: white;
   background: linear-gradient(to bottom, #06466b 0%, #043D5D 100%);
   position: relative;
   word-wrap: break-word;
   box-shadow: 2px 2px 3px 1px #6b6b6b31;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.yours:hover { 
+  margin-left: 6px;
+  box-shadow: 2px 2px 3px 1px #6b6b6b31;
 }
 
-.mine {
+.mine { 
+  margin-right: 5px;
+  align-items: flex-end;
   background-color: #eeeeee;
   color: black;
-  align-items: flex-end;
   margin-left: 25%;
   background-attachment: fixed;
   position: relative;
+  padding-left: 15px;
+  padding-right: 15px;
   box-shadow: 2px 2px 3px 1px #6b6b6b31;
+}
+.mine:hover { 
+
+  margin-right: 6px;
+  box-shadow: 2px 2px 3px 2px #6b6b6b31;
 }
 
 .alertPopup {
