@@ -10,6 +10,9 @@ import useLocalStorage from '../hooks/useLocalStorage'
 
 import ListaUtentiOnline from './ListaUtentiOnline'
 import Messaggi from './Messaggi'
+import UserActions from './UserActions'
+
+import logo from "../assets/img/chat2.svg"
 
 
 function Conversazioni() {
@@ -30,8 +33,8 @@ function Conversazioni() {
         switch (action.type) {
             //aggiungo il messaggio nell'array di messaggi di quella conversazione...
             case 'addMessageToConv':
-                const { recipient: rec, msg } = action.payload
-
+                const { recipient: rec } = action.payload
+                let { msg } = action.payload
                 newConv = [...conversations]
                 newSingleConv = {
                     with: rec,
@@ -277,7 +280,7 @@ function Conversazioni() {
 
     useEffect(() => {
 
-        //console.log("currCONV", currConv)
+        console.log("currCONV", currConv)
 
     }, [currConv])
 
@@ -293,20 +296,19 @@ function Conversazioni() {
         <>
             {showAlert && <div className="alertPopup" onClick={() => setShowAlert(false)}>Nuovo messaggio da <strong>{msgFrom}</strong></div>}
 
-            <Row className="bgred h-100">
-                <Col sm={3}>
-                    <div className="d-flex justify-content-between">
-                        <Button variant="success"
-                            onClick={() => { dispatch({ type: 'makeAllReadConv', payload: { currentConv: currConv } }) }}>
-                            {currConv ? currConv.with : "NULL"}
-                        </Button>
-                        <h6>R: {recipient}</h6>
-                        <h6 style={{ color: "red" }}>{onlineUsers.length}</h6>
-                    </div>
-                    <ListaUtentiOnline recipient={recipient} setRecipient={setRecipient}
-                        onlineUsers={onlineUsers} conv={conv} />
-                </Col>
-                <Col sm={9} className="bgblue">
+            <div className="row panelLeft m-0 p-0" style={{ height: "100vh" }}>
+                <div className="col col-sm-4 col-md-4 col-lg-4">
+                    <UserActions />
+
+
+
+                    <ListaUtentiOnline
+                        recipient={recipient}
+                        setRecipient={setRecipient}
+                        onlineUsers={onlineUsers}
+                        conv={conv} />
+                </div>
+                <div className="col col-sm-8 col-md-8 col-lg-8 bgblue">
                     {onlineUsers ?
                         <>
                             {recipient ?
@@ -317,14 +319,18 @@ function Conversazioni() {
                                     spedisciMessaggio={spedisciMessaggio}
                                 />
                                 :
-                                <Alert variant="success">Seleziona un contatto</Alert>
+                                <div className="HomePage d-flex flex-column align-items-center justify-content-center h-100">
+                                    {/* <i className="fa fa-comments homeIcon"></i> */}
+                                    <img src={logo} className="homeIcon" />
+                                    <h1 className="textShadow">Hello!</h1>
+                                </div>
                             }
                         </>
                         :
                         <Alert variant="warning">Non ci sono utenti loggati oltre a te!</Alert>
                     }
-                </Col>
-            </Row>
+                </div>
+            </div>
         </>
 
     )

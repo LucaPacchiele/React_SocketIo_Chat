@@ -20,10 +20,13 @@ const io = socketIo(server, {
 // moment().format(); 
 
 
-const utentiLoggati = [
-    //{ userName: "pippo", socketId: "0bm0fpa00001", online: true },
-    //   { userName: "mario", socketId: "00msy0r000y2", online:true },
-    //   { userName: "asd", socketId: "a0000B0myr03", online:true }
+let utentiLoggati = [
+    {userName: 'Daniele', socketId: 'VuvPKE_z26UHuWrHAABO'},
+    {userName: 'Anna', socketId: 'VuvPKE_z26afqferHAABO'},
+    {userName: 'Paolo', socketId: 'fdbaPKE_z2bfb6UHuWrHAABO'},
+    {userName: 'Luigi', socketId: 'VuvbsPdfE_z26UHuWbfsbBO'},
+    {userName: 'Elisa', socketId: 'VubPKE_z26UHuWrHAABO'},
+    {userName: 'Susanna', socketId: 'wevPKE_z26UHuWrHAABO'}
 ];
 
 
@@ -88,7 +91,7 @@ io.on("connection", (socket) => {
             userName: name,
             socketId
         }
-        utentiLoggati.push(currUser);
+        utentiLoggati = [currUser, ...utentiLoggati]
     });
 
     // database utenti e settaggio se online o offline

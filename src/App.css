@@ -1,8 +1,30 @@
+@font-face {
+  font-family: 'Roboto-Regular';
+  src: url('./assets/fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto-Bold';
+  src: url('./assets/fonts/Roboto-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto-Italic';
+  src: url('./assets/fonts/Roboto-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
+  font-family: 'Roboto-Regular', sans-serif;
+
   margin: 0;
   padding: 0;
 }
-
 
 body {
   background-color: rgb(174, 220, 221);
@@ -15,12 +37,12 @@ body {
 
 #UtentiOnline .contactLink:hover {
   cursor: pointer;
-  background-color: #80a8ff;
+  background-color: #043D5D;
 }
 
 #UtentiOnline .contactActive {
   color: white;
-  background-color: #a6c2ff;
+  background-color: #043D5D;
 }
 
 .bgred {
@@ -45,32 +67,37 @@ body {
   padding: 8px 15px;
   margin-top: 5px;
   margin-bottom: 5px;
+  word-wrap: break-word;
 }
 
 .yours {
   align-items: flex-start;
   margin-right: 25%;
-  background-color: #eee;
+  color: white;
+  background: linear-gradient(to bottom, #06466b 0%, #043D5D 100%);
   position: relative;
+  word-wrap: break-word;
+  box-shadow: 2px 2px 3px 1px #6b6b6b31;
 }
 
 .mine {
+  background-color: #eeeeee;
+  color: black;
   align-items: flex-end;
-  color: white;
   margin-left: 25%;
-  background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
   background-attachment: fixed;
   position: relative;
+  box-shadow: 2px 2px 3px 1px #6b6b6b31;
 }
 
 .alertPopup {
   position: absolute;
   z-index: 100;
   top: 15px;
-  left: 15px;
+  right: 15px;
   padding: 20px;
-  background-color: rgb(216, 252, 216);
-  color: rgb(73, 128, 73);
+  background-color: #23B684;
+  color: white;
   padding: 10px;
   box-shadow: 2px 2px 4px 2px #42424293;
 }
@@ -86,13 +113,117 @@ body {
 
 .inputMessage:focus {
   outline: none;
-  background-color: rgb(186, 238, 108);
+  background-color: rgb(231, 231, 231);
 }
 
-.buttonMessage {
+.Messaggi .btn-primary {
   border: 0;
+  color: white;
+  background-color: #23B684
+}
+
+.Messaggi .btn-primary:hover {
+  background-color: #14805c !important;
 }
 
 .buttonMessage:active {
   outline: none;
+}
+
+.searchUserOnline {
+  border-radius: 20px;
+  padding: 8px;
+  padding-left: 15px;
+  border: 1px #000 solid;
+  z-index: 5;
+  background-color: white;
+  display: flex;
+  box-shadow: 0px 2px 3px 1px #0000005b;
+}
+
+.searchUserOnline .searchBar {
+  border: 0;
+  outline: none;
+  width: 100%;
+}
+
+.searchUserOnline .searchButtonIcon {
+  flex-grow: 0;
+  z-index: 10;
+  margin-right: 10px;
+  border: none;
+  outline: none;
+  flex: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  color: black;
+}
+
+.buttonLogout {
+  color: rgb(153, 153, 153)
+}
+
+.buttonLogout:hover {
+  cursor: pointer;
+}
+
+.checkReadIcon {
+  color: #23B684;
+}
+
+.panelLeft {
+  background-color: #032E46;
+  color: white;
+}
+
+.Messaggi {
+  background-color: #c7e0d8;
+}
+
+.contactHeader {
+  background-color: #043D5D;
+  color: white;
+  box-shadow: 0px 2px 3px 1px #0000005b;
+}
+
+.canvasAvatarUsername {
+  background-color: #aeb6bd73;
+  border: 3px solid #23B684;
+  border-radius: 10px;
+  box-shadow: 2px 2px 3px 1px #0000005b;
+}
+
+.canvasAvatarUsers {
+  background-color: #aeb6bd3b;
+  border-radius: 8px;
+}
+
+.textShadow{
+  font-size: 8vw;
+  font-weight: bold;
+  letter-spacing: 8px;
+  text-shadow:6px 6px 2px #f3705a, 10px 10px 4px #ffd15c, 14px 14px 8px #66c6b9
+}
+
+
+
+
+.homeIcon {
+  width: 40vw;
+  transform: scale(2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+  }
+  70% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.95);
+  }
 }

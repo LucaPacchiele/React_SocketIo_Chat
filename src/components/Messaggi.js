@@ -16,7 +16,7 @@ export default function Messaggi({ recipient, msgs, me, spedisciMessaggio }) {
         to: '',
         body: '',
         time: '',
-        read:false
+        read: false
     }
 
     const msgRef = useRef()
@@ -38,9 +38,9 @@ export default function Messaggi({ recipient, msgs, me, spedisciMessaggio }) {
             to: recipient,
             body: msgRef.current.value,
             time: moment().toString(), //necessario convertirlo in stringa poichè verrà usato come ID del messaggio assieme a from e to
-            read:false
+            read: false
         }
-        
+
         spedisciMessaggio(recipient, msg)
 
         msgRef.current.value = ""
@@ -48,35 +48,38 @@ export default function Messaggi({ recipient, msgs, me, spedisciMessaggio }) {
 
 
     return (
-        <Row className="bggreen d-flex flex-column h-100">
-            <div className="p-3 flex-grow-1 justify-content-end overflow-auto" style={{ height: "20vh" }}>
-                I miei messaggi con {recipient}
-
-                {msgs.map((msg, index) => {
-                    currMsg = {
-                        from: msg.from,
-                        to: msg.to,
-                        body: msg.body,
-                        time: msg.time,
-                        read: msg.read
+        <Row className="Messaggi d-flex flex-column h-100">
+            <div className="flex-grow-1 justify-content-end overflow-auto" style={{ height: "20vh" }}>
+                <div className="contactHeader p-4 m-0">
+                    <h2>{recipient}</h2>
+                </div>
+                <div className="p-2">
+                    {msgs.map((msg, index) => {
+                        currMsg = {
+                            from: msg.from,
+                            to: msg.to,
+                            body: msg.body,
+                            time: msg.time,
+                            read: msg.read
+                        }
+                        return (
+                            <Fragment key={index}>
+                                {currMsg.from === me ?
+                                    <div className="mine message d-flex justify-content-between" >
+                                        <div>{msg.body}</div>
+                                        {msg.read && <i className="fa fa-check checkReadIcon"></i>}
+                                    </div>
+                                    :
+                                    <div className="yours message ">
+                                        {msg.body}
+                                    </div>
+                                }
+                            </Fragment>
+                        )
                     }
-                    return (
-                        <Fragment key={index}>
-                            {currMsg.from === me ?
-                                <div className="mine message d-flex justify-content-between" >
-                                     <div>{msg.body}</div>
-                                    {msg.read && <div style={{color:"green", fontWeight:"bold"}}>v</div>}
-                                </div>
-                                :
-                                <div className="yours message ">
-                                    {msg.body}
-                                </div>
-                            }
-                        </Fragment>
-                    )
-                }
-                )}
+                    )}
 
+                </div>
 
                 <div ref={lastMessage}>
                     <Moment date={currMsg.time} //in questo momento currMsg è l'ultimo messaggio
@@ -85,6 +88,7 @@ export default function Messaggi({ recipient, msgs, me, spedisciMessaggio }) {
                     />
                 </div>
 
+
             </div>
             <div className="">
                 <Form onSubmit={e => handleSubmit(e)} className="d-flex justify-content-between">
@@ -92,7 +96,9 @@ export default function Messaggi({ recipient, msgs, me, spedisciMessaggio }) {
                         type="text" ref={msgRef}
                         placeholder="Inserisci il messaggio..."
                         required />
-                    <Button type="submit" variant="success" className="buttonMessage">Invia</Button>
+                    <Button type="submit" className="buttonMessage pr-4 pl-4">
+                        <i className="fa fa-paper-plane" aria-hidden="true"></i>
+                    </Button>
                 </Form>
             </div>
         </Row>
