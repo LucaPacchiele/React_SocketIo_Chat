@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthProvider";
 import { update } from "jdenticon";
 import { useHistory } from "react-router-dom";
 
-function UserActions() {
+function UserActions({ searchValue, setSearchValue, searchRef }) {
     const { user, signout } = useAuth()
     let history = useHistory();
 
@@ -19,20 +19,42 @@ function UserActions() {
         }
     }, [])
 
+    const handleSubmit = (e) => {
+        e.preventDefault()
+    }
+    const handleChange = (e) => {
+        setSearchValue(e.target.value)
+    }
+
 
 
     return (
+        <div className="d-flex flex-column w-100  ">
+            <div className="">
+                <div className="d-flex flex-column align-items-center ">
+                    <div className="d-flex">
+                        <canvas id="myAvatar" className="m-2 canvasAvatarUsername" width="70" height="70"></canvas>
+                        <div className="buttonLogout ml-2" onClick={() => {
+                            history.push("/login");
+                            signout()
+                        }}><i className="fa fa-times"></i>
+                        </div>
+                    </div>
+                    <h3 className="wrapWord   w-100 text-center  ">{user.name}</h3>
+                </div>
 
-        <div className="UserActions d-flex align-items-center justify-content-between pt-5 pb-5" style={{ height: "20vh" }}>
-            <div className="d-flex align-items-center ml-2">
-                <canvas id="myAvatar" className="mr-4 canvasAvatarUsername" width="70" height="70"></canvas>
-                <h3 className="mr-4">{user.name}</h3>
             </div>
-            <div className="buttonLogout p-2" onClick={() => {
-                history.push("/login");
-                signout()
-            }}><i className="fa fa-times"></i>
-            </div>
+
+            <form onSubmit={e => handleSubmit(e)}>
+                <div className="searchUserOnline mt-2">
+                    <input type="text" className="searchBar" placeholder="Search..."
+                        onChange={(e) => { handleChange(e) }} ref={searchRef} />
+                    <div className="searchButtonIcon">
+                        <i className="fa fa-search"></i>
+                    </div>
+                </div>
+            </form>
+
         </div>
     )
 }

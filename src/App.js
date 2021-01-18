@@ -49,7 +49,7 @@ function App() {
 
   return (
 
-    <div className="App m-0 p-0">
+   <>
       {/* <TestComponent /> */}
       <Router history={history}>
         <SocketProvider>
@@ -76,8 +76,7 @@ function App() {
           </AuthProvider>
         </SocketProvider>
       </Router>
-
-    </div>
+</>
   );
 }
 

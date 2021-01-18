@@ -27,14 +27,14 @@ export default function Client() {
         }
     }
 
-    
+
 
     return (
 
         <>
-        
-            
-                {/* <Nav className="justify-content-center">
+
+
+            {/* <Nav className="justify-content-center">
                     <Nav.Item>
                         <Nav.Link eventKey="contatti" onClick={() => { setActivePanel("contatti") }}>
                             Contatti
@@ -47,9 +47,9 @@ export default function Client() {
                     </Nav.Item>
                 </Nav> */}
 
-              
-                    {/* {user.name && renderPanel()} */}
-                    {user.name && <Conversazioni />}
+
+            {/* {user.name && renderPanel()} */}
+            {user.name && <Conversazioni />}
 
 
         </>

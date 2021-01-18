@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useState, useEffect, useReducer, useRef } from 'react'
 import { Container, Button, Alert, Row, Col } from 'react-bootstrap'
 
 import { useAuth } from "../context/AuthProvider";
@@ -23,10 +23,15 @@ function Conversazioni() {
     const [showAlert, setShowAlert] = useState(false);
     const [msgFrom, setMsgFrom] = useState("");
     const [msgIn, setMsgIn] = useState("");
+    const [userDisconnected, setUserDisconnected] = useState("");
     const [onlineUsers, setOnlineUsers] = useState([])
     const [loadSingleConv, loadConv, loadAllConv, storeConv] = useLocalStorage("conv-" + user.name)
     const [recipient, setRecipient] = useState('')
     const [currConv, setCurrConv] = useState({ with: '', msgs: [] })
+    const [msgText, setMsgText] = useState("")
+    const [searchValue, setSearchValue] = useState("")
+
+    const searchRef = useRef()
 
     function reducer(conversations, action) {
         let newConv, newSingleConv, indice
@@ -35,6 +40,7 @@ function Conversazioni() {
             case 'addMessageToConv':
                 const { recipient: rec } = action.payload
                 let { msg } = action.payload
+
                 newConv = [...conversations]
                 newSingleConv = {
                     with: rec,
@@ -67,7 +73,7 @@ function Conversazioni() {
                     ]
                 break
 
-            case 'setAllMessageRead':
+            case 'setYourMsgsRead':
                 const { fromUser, withUser } = action.payload
 
                 newConv = [...conversations]
@@ -76,9 +82,16 @@ function Conversazioni() {
                     //quando ho trovato quella specifica conversazione, imposto letti tutti i messaggi
                     if (c.with === fromUser) {
                         const newMsgs = [...c.msgs].map(m => {
-                            return {
-                                ...m,
-                                read: true
+                            if (m.from === user.name) {
+                                return {
+                                    ...m,
+                                    read: true
+                                }
+                            }
+                            else {
+                                return {
+                                    ...m
+                                }
                             }
                         })
 
@@ -100,34 +113,20 @@ function Conversazioni() {
                     newConv.splice(indice, 1, newSingleConv)
                     return newConv
                 }
-
                 break
 
-
-            case 'loadConv':
-                const onUsers = action.payload
-                newConv = [...conversations]
-                onUsers.map(u => {
-                    const c = loadSingleConv(u.userName)
-                    if (c)
-                        newConv = [...newConv, c]
-                    else {
-                        u.userName && storeConv({ with: u.userName, msgs: [] }, u.userName)
-                        newConv = [...newConv, { with: u.userName, msgs: [] }]
-                    }
-                })
-                return newConv
-                break
-
-
-            case 'makeAllReadConv':
+            //contrassegna i messaggi ricevuti come letti e invia una notifica al server al termine, comunicando che
+            //l'utente ha letto tutti i messaggi con quell'utente
+            case 'setMyMsgsRead':
                 let { currentConv } = action.payload
                 newConv = [...conversations]
                 const readMsgs = [...currentConv.msgs].map(m => {
                     let msgToRead = { ...m }
 
-                    if (!m.read) { //imposto letti solo i messaggi ricevuti ..
-                        if (m.from !== user.name) {
+                    //imposto letti solo i messaggi ricevuti ..
+                    if (m.from !== user.name) {
+                        //..che non sono ancora stati letti
+                        if (!m.read) {
                             msgToRead = {
                                 ...m,
                                 read: true
@@ -155,6 +154,21 @@ function Conversazioni() {
                 newConv.splice(index, 1, currentConv)
                 return newConv
                 break
+
+            case 'loadConv':
+                const onUsers = action.payload
+                newConv = [...conversations]
+                onUsers.map(u => {
+                    const c = loadSingleConv(u.userName)
+                    if (c)
+                        newConv = [...newConv, c]
+                    else {
+                        u.userName && storeConv({ with: u.userName, msgs: [] }, u.userName)
+                        newConv = [...newConv, { with: u.userName, msgs: [] }]
+                    }
+                })
+                return newConv
+                break
             //non utilizzate
             case 'clearConv':
                 return []
@@ -170,14 +184,18 @@ function Conversazioni() {
 
     const [conv, dispatch] = useReducer(reducer, []);
 
-
-
-    const spedisciMessaggio = (rec, msg) => {
+    const sendMessage = (rec, msg) => {
         dispatch({ type: 'addMessageToConv', payload: { recipient: rec, msg } })
         socket.emit("msgOut", msg)
+        setMsgText("")
     }
 
+
+
+
     useEffect(() => {
+        setMsgText("")
+
         // faccio una chiamata al server appena carico il componente ...
         socket.emit("getOnlineUsers", user.name, (res) => {
             setOnlineUsers(Array.from(JSON.parse(res.data)))
@@ -191,18 +209,17 @@ function Conversazioni() {
         })
 
         socket.on('msgAllReadIn', ({ fromUser, withUser }) => {
-            console.log("msgAllReadIn", fromUser, withUser)
-            dispatch({ type: 'setAllMessageRead', payload: { fromUser, withUser } })
+            // console.log("msgAllReadIn", fromUser, withUser)
+            dispatch({ type: 'setYourMsgsRead', payload: { fromUser, withUser } })
         })
 
         socket.on('client_logout', (name) => {
-            if (!onlineUsers.find(el => el.userName === name)) {
-                setRecipient('')
-            }
+            console.log(name, " ha abbandonato")
+            setUserDisconnected(name)
         })
 
-
     }, [])
+
 
 
 
@@ -222,55 +239,53 @@ function Conversazioni() {
         }
     })
 
-    // useEffect(() => {
-    //     console.log("--> invio", msgReadToSend)
-    //     setMsgReadToSend("")
-    // }, [msgReadToSend])
-
 
     useEffect(() => {
         //al variare degli onlineUsers carico le conversazioni dal DB con gli utenti attualmente connessi
-
         dispatch({ type: 'loadConv', payload: onlineUsers })
-
-
-        //se il recipient corrente ha effettuato il logout imposto il suo valore come vuoto,
-        // in modo che non viene renderizzata la chat
-
     }, [onlineUsers])
 
 
     useEffect(() => {
         msgFrom !== recipient ? setShowAlert(true) : setShowAlert(false)
-
     }, [msgFrom])
 
     useEffect(() => {
         //se mittente msg.from è il recipient attuale
         if (msgIn === recipient) {
             // allora devo impostare quella conversazione letta e dopo inviare notifica lettura per quella conversazione
-            dispatch({ type: 'makeAllReadConv', payload: { currentConv: currConv } })
+            dispatch({ type: 'setMyMsgsRead', payload: { currentConv: currConv } })
         }
         setMsgIn("")
     }, [msgIn])
 
     useEffect(() => {
+        //se il recipient corrente ha effettuato il logout imposto il suo valore come vuoto,
+        // in modo che non viene renderizzata la chat
+        recipient === userDisconnected && setRecipient('')
+        setUserDisconnected("")
+    }, [userDisconnected])
+
+    useEffect(() => {
         msgFrom === recipient && setShowAlert(false)
 
+        //quando cambio l'utente con cui chattare carico
         setCurrConv(() => {
-            const singleConv = loadSingleConv(recipient)
+            const loadedConv = loadSingleConv(recipient)
             //trovo e carico la conversazione dal DB
-            if (singleConv) {
+            if (loadedConv) {
 
-                recipient && dispatch({ type: 'makeAllReadConv', payload: { currentConv: singleConv } })
+                recipient && dispatch({ type: 'setMyMsgsRead', payload: { currentConv: loadedConv } })
 
-                return singleConv
+                return loadedConv
             }
             else { //carico una conversazione vuota e preparo il DB
                 recipient && storeConv({ with: recipient, msgs: [] }, recipient)
                 return { with: recipient, msgs: [] }
             }
         })
+
+        setMsgText("")
 
     }, [recipient])
 
@@ -280,7 +295,7 @@ function Conversazioni() {
 
     useEffect(() => {
 
-        console.log("currCONV", currConv)
+        // console.log("currCONV", currConv)
 
     }, [currConv])
 
@@ -296,19 +311,27 @@ function Conversazioni() {
         <>
             {showAlert && <div className="alertPopup" onClick={() => setShowAlert(false)}>Nuovo messaggio da <strong>{msgFrom}</strong></div>}
 
-            <div className="row panelLeft m-0 p-0" style={{ height: "100vh" }}>
-                <div className="col col-sm-4 col-md-4 col-lg-4">
-                    <UserActions />
+            <Row className="d-flex flex-row m-0 p-0" style={{ height: "100vh" }}>
 
+                <Col sm={4} md={4} lg={3} className="panelLeft m-0 p-0  d-flex flex-column " style={{ height: "100vh" }}>
 
+                    <div className="UserActions d-flex flex-row mt-2 mb-2 p-2 justify-content-center align-content-center" >
+                        <UserActions searchValue={searchValue} setSearchValue={setSearchValue} searchRef={searchRef} />
+                    </div>
 
-                    <ListaUtentiOnline
-                        recipient={recipient}
-                        setRecipient={setRecipient}
-                        onlineUsers={onlineUsers}
-                        conv={conv} />
-                </div>
-                <div className="col col-sm-8 col-md-8 col-lg-8 bgblue">
+                    <div className="m-0 p-0 d-flex flex-column flex-grow-1 overflow-auto ">
+                        <ListaUtentiOnline
+                            recipient={recipient}
+                            setRecipient={setRecipient}
+                            onlineUsers={onlineUsers}
+                            conv={conv}
+                            searchValue={searchValue} setSearchValue={setSearchValue}
+                            searchRef={searchRef}
+                            />
+                    </div>
+                </Col>
+
+                <Col sm={8} md={8}  lg={9} className="panelRight m-0 p-0 d-flex flex-column flex-grow-1 bgblue ">
                     {onlineUsers ?
                         <>
                             {recipient ?
@@ -316,7 +339,9 @@ function Conversazioni() {
                                     recipient={recipient}
                                     msgs={currConv ? currConv.msgs : []}
                                     me={user.name}
-                                    spedisciMessaggio={spedisciMessaggio}
+                                    sendMessage={sendMessage}
+                                    msgText={msgText}
+                                    setMsgText={setMsgText}
                                 />
                                 :
                                 <div className="HomePage d-flex flex-column align-items-center justify-content-center h-100">
@@ -329,8 +354,8 @@ function Conversazioni() {
                         :
                         <Alert variant="warning">Non ci sono utenti loggati oltre a te!</Alert>
                     }
-                </div>
-            </div>
+                </Col>
+            </Row>
         </>
 
     )

@@ -58,7 +58,7 @@ body {
 }
 
 .small-text {
-  color: darkgrey;
+  color: darkgrey !important;
   font-size: 14px;
 }
 
@@ -68,7 +68,7 @@ body {
   margin-top: 5px;
   margin-bottom: 5px;
   word-wrap: break-word;
-  width:fit-content;
+  width: fit-content;
 }
 
 .yours {
@@ -83,12 +83,12 @@ body {
   padding-left: 15px;
   padding-right: 15px;
 }
-.yours:hover { 
-  margin-left: 6px;
-  box-shadow: 2px 2px 3px 1px #6b6b6b31;
+
+.yours:hover {
+  box-shadow: 2px 2px 3px 2.5px #6b6b6b31;
 }
 
-.mine { 
+.mine {
   margin-right: 5px;
   align-items: flex-end;
   background-color: #eeeeee;
@@ -100,10 +100,9 @@ body {
   padding-right: 15px;
   box-shadow: 2px 2px 3px 1px #6b6b6b31;
 }
-.mine:hover { 
 
-  margin-right: 6px;
-  box-shadow: 2px 2px 3px 2px #6b6b6b31;
+.mine:hover {
+  box-shadow: 2px 2px 3px 2.5px #6b6b6b31;
 }
 
 .alertPopup {
@@ -148,7 +147,7 @@ body {
 
 .searchUserOnline {
   border-radius: 20px;
-  padding: 8px;
+  padding: 5px;
   padding-left: 15px;
   border: 1px #000 solid;
   z-index: 5;
@@ -199,13 +198,19 @@ body {
 }
 
 .contactHeader {
+  position:relative;
   background-color: #043D5D;
   color: white;
   box-shadow: 0px 2px 3px 1px #0000005b;
+  z-index: 50;
+  transition: opacity 0.5s ease-in-out, width 3s ease-in-out;
+}
+.contactHeader:hover {
+  opacity: 1 !important;
 }
 
 .canvasAvatarUsername {
-  background-color: #aeb6bd73;
+  background-color: #aeb6bd56;
   border: 3px solid #23B684;
   border-radius: 10px;
   box-shadow: 2px 2px 3px 1px #0000005b;
@@ -216,15 +221,35 @@ body {
   border-radius: 8px;
 }
 
-.textShadow{
+.textShadow {
   font-size: 8vw;
   font-weight: bold;
   letter-spacing: 8px;
-  text-shadow:6px 6px 2px #f3705a, 10px 10px 4px #ffd15c, 14px 14px 8px #66c6b9
+  text-shadow: 6px 6px 2px #f3705a, 10px 10px 4px #ffd15c, 14px 14px 8px #66c6b9
+}
+
+.wrapWord {
+  word-wrap: break-word;
+  min-width: 0;
+}
+
+.wrapDots {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wrapDotsPar {
+  width: 100%;
+}
+.minWidthZero {
+  min-width: 0;
 }
 
 
-
+.HomePage {
+  color: white;
+}
 
 .homeIcon {
   width: 40vw;
