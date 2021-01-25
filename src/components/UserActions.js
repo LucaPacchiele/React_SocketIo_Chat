@@ -40,7 +40,7 @@ function UserActions({ searchValue, setSearchValue, searchRef }) {
                         }}><i className="fa fa-times"></i>
                         </div>
                     </div>
-                    <h3 className="wrapWord   w-100 text-center  ">{user.name}</h3>
+                    <h3 className="wrapWord w-100 text-center  ">{user.name}</h3>
                 </div>
 
             </div>

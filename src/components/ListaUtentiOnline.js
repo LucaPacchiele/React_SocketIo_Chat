@@ -3,9 +3,16 @@ import { Nav, Alert, Row, Col, Badge } from 'react-bootstrap'
 import { update } from "jdenticon";
 
 import { useAuth } from "../context/AuthProvider";
+import useLocalStorage from '../hooks/useLocalStorage'
+
+
+import UtenteOnline from './UtenteOnline'
+
 
 export default function ListaUtentiOnline({ recipient, setRecipient, onlineUsers, conv, searchValue, setSearchValue, searchRef }) {
     const { user } = useAuth()
+    const { getLastMessage, totMsgToRead } = useLocalStorage("conv-" + user.name)
+
 
     useEffect(() => {
         const timerAvatar = setInterval(() => {
@@ -28,46 +35,48 @@ export default function ListaUtentiOnline({ recipient, setRecipient, onlineUsers
         return false
     }
 
-    const getLastMessage = (name) => {
-        const c = conv.find(e => e.with === name)
-        if (c) {
-            if (c.msgs.length > 0) {
-                const lastMsg = c.msgs[c.msgs.length - 1]
-                if (lastMsg.from === user.name && lastMsg.read)
-                    return (
-                        <>
-                            <i className="fa fa-check checkReadIcon small-text mr-1"></i>
-                            { lastMsg.body}
-                        </>
-                    )
-                else
-                    return lastMsg.body
-            }
-        }
-        else return ""
-    }
+    // const getLastMessage = (name) => {
+    //     const c = conv.find(e => e.with === name)
+    //     if (c) {
+    //         if (c.msgs.length > 0) {
+    //             const lastMsg = c.msgs[c.msgs.length - 1]
+    //             if (lastMsg.from === user.name && lastMsg.read)
+    //                 return (
+    //                     <>
+    //                         <i className="fa fa-check checkReadIcon small-text mr-1"></i>
+    //                         { lastMsg.body}
+    //                     </>
+    //                 )
+    //             else
+    //                 return lastMsg.body
+    //         }
+    //     }
+    //     else return ""
+    // }
 
 
 
-    const totMsgToRead = (name) => {
-        let totMsgToRead = 0
-        const c = conv.find(e => e.with === name)
-        if (c) {
-            if (c.with !== recipient) {
-                totMsgToRead = c.msgs.filter(m => {
-                    if (m.read === false && m.from !== user.name) {
-                        return true
-                    }
-                })
 
-            }
-        }
-        return totMsgToRead.length
-    }
+
+    // const totMsgToRead = (name) => {
+    //     let totMsgToRead = 0
+    //     const c = conv.find(e => e.with === name)
+    //     if (c) {
+    //         if (c.with !== recipient) {
+    //             totMsgToRead = c.msgs.filter(m => {
+    //                 if (m.read === false && m.from !== user.name) {
+    //                     return true
+    //                 }
+    //             })
+
+    //         }
+    //     }
+    //     return totMsgToRead.length
+    // }
 
     return (
 
-        <div id="UtentiOnline" className="d-flex flex-column "   >
+        <div id="UtentiOnline" className="d-flex flex-column">
             <div className="text-center pb-2 small-text">Online: {onlineUsers.length}</div>
 
             {onlineUsers.map((el, index) => (
@@ -84,17 +93,8 @@ export default function ListaUtentiOnline({ recipient, setRecipient, onlineUsers
                     }}>
 
 
-                    <canvas id={el.userName} width="45" height="45" className="canvasAvatarUsers d-flex"></canvas>
-                    <div className=" d-flex flex-column flex-grow-1 minWidthZero">
-                        <div className="ml-3 wrapDots">{el.userName}</div>
-                        <div className="ml-3 small-text wrapDots">{getLastMessage(el.userName)}</div>
-                    </div>
+                    <UtenteOnline userName={el.userName} recipient={recipient} />
 
-                    <div>
-                        <Badge variant="info" className="p-2">
-                            {totMsgToRead(el.userName) > 0 && totMsgToRead(el.userName)}
-                        </Badge>
-                    </div>
                 </div>
             ))}
         </div>

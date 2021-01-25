@@ -1,17 +1,22 @@
 import React, { Fragment, createRef, useRef, useState, useEffect } from 'react'
-import { Container, Tab, Nav, Form, Button, Row, Col, Alert } from 'react-bootstrap'
+import { Container, Tab, Nav, Form, Button, Row, Col, Alert, Spinner } from 'react-bootstrap'
 
 
 import Moment from 'react-moment';
 import moment from 'moment';
-import { authContext } from '../context/AuthProvider';
+
 
 //da implementare css messaggi https://codepen.io/swards/pen/gxQmbj
 
 
-export default function Messaggi({ recipient, msgs, me, sendMessage, msgText, setMsgText }) {
+export default function Messaggi({ recipient, msgs, me, setMsgSent, msgText, setMsgText, moreMessages }) {
     const revMsgs = msgs.reverse()
     const [posHeader, setPosHeader] = useState(false)
+    const [lastMsgMod, setLastMsgMod] = useState("")
+    const [currRecipient, setCurrRecipient] = useState("")
+
+    const [showLoading, setShowLoading] = useState(false)
+    let timer
 
 
     const init_msg = {
@@ -22,37 +27,41 @@ export default function Messaggi({ recipient, msgs, me, sendMessage, msgText, se
         read: false
     }
 
-
     const lastMessage = createRef()
     const msgBox = createRef()
     const contactHeader = createRef()
 
-
     let currMsg = { init_msg }
+
     const headerStyleRelative = {
-        width:"100%",
+        width: "100%",
         opacity: "1"
     }
     const headerStyleFixed = {
         opacity: "0.5"
     }
 
-    /* TODO 
-    - sistemare barra utente con cui si sta chattando, il position rompe allo scroll
-    - implementare caricamento tanti messaggi 
-    - farla responsive
-    
-    */
 
     useEffect(() => {
-        // da ottimizzare vedi infinite scroll per caricare automaticamente un tot di messaggi (ad es di volta in volta gli ultimo 30)
-        // e quando si scorre sopra si richiama il caricamento di altri dieci, ma si lascia il riferimento a firstMessage
+
+
+
+
+        if (msgs.length > 0) {
+            setLastMsgMod(msgs[msgs.length - 1].time)
+        }
+    }, [msgs])
+
+
+    useEffect(() => {
+        console.log("TRIGGER 2")
+        //msgBox.current.scrollTop = msgBox.current.scrollHeight //carica direttamente in fondo al div referenziato da msgBox
 
         lastMessage.current.scrollIntoView({ behavior: 'smooth' })
+    }, [lastMsgMod])
 
-        // msgBox.current.scrollTop = msgBox.current.scrollHeight //carica direttamente in fondo al div referenziato da msgBox
 
-    }, [msgs])
+
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -65,33 +74,53 @@ export default function Messaggi({ recipient, msgs, me, sendMessage, msgText, se
             read: false
         }
 
-        sendMessage(recipient, msg)
-
+        setMsgSent({ recipient, msg })
     }
 
     const onScroll = (e) => {
         msgBox.current.scrollTop > contactHeader.current.clientHeight ? setPosHeader(true) : setPosHeader(false)
+        if (msgs.length > 0) {
+            if (msgBox.current.scrollTop < 1) {
+                setShowLoading(true)
+                console.log("START TIMER")
+                timer = setTimeout(() => {
+                    moreMessages()
+                    setShowLoading(false)
+                }, 2000)
+
+            }
+        }
+        else setLastMsgMod("")
     }
 
+    useEffect(() => {
+        console.log("showLoading", showLoading)
+        !showLoading && clearTimeout(timer)
+
+    }, [showLoading])
 
     useEffect(() => {
-        //    console.log("posHeader", posHeader)
+        console.log("recipient", recipient)
+        setShowLoading(false)
+        clearTimeout(timer)
+        lastMessage.current.scrollIntoView({ behavior: 'smooth' })
 
-    }, [posHeader])
-
-
-
-
+    }, [recipient])
 
     return (
         <div className="Messaggi d-flex flex-column w-100" style={{ height: "100vh" }} >
-            <div ref={contactHeader} className="contactHeader p-4 m-0 d-flex"
+            <div ref={contactHeader} className="contactHeader p-4 m-0 d-flex justify-content-between"
                 style={posHeader ? headerStyleFixed : headerStyleRelative}>
                 {recipient}
+                {showLoading && <Spinner animation="border" variant="light" className="spinnerLoadMsgs" size="sm" />}
             </div>
+
+
             <div ref={msgBox} className="MsgBox d-flex flex-column flex-grow-1 overflow-auto  " onScroll={(e) => onScroll(e)}>
+
+
                 <div className="p-2 flex-grow-1 d-flex flex-column justify-content-end ">
-                    {revMsgs.map((msg, index) => {
+                    {revMsgs && revMsgs.map((msg, index) => {
                         currMsg = {
                             from: msg.from,
                             to: msg.to,
